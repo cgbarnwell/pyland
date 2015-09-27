@@ -1,21 +1,9 @@
 #include <memory>
 
-
-extern "C" {
-#ifdef USE_GL
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-#endif
-
-#ifdef USE_GLES
-#include <GLES2/gl2.h>
-#endif
-}
-
-
 #include "mouse_cursor.hpp"
 
 #include "game_window.hpp"
+#include "config.hpp"
 #include "input_manager.hpp"
 #include "lifeline.hpp"
 #include "mouse_input_event.hpp"
@@ -40,20 +28,25 @@ MouseCursor::MouseCursor(GameWindow* window):
             y = event.to.y;
             dirty = true;
         })),
-    atlas(TextureAtlas::get_shared("../resources/cursor.png")),
     shader(Shader::get_shared("cursor_shader")),
     vbo(0),
     x(0),
     y(0),
     dirty(true)
 {
+
+    Config::json j = Config::get_instance();
+    std::string game_folder = j["files"]["game_folder"];
+
+    atlas = TextureAtlas::get_shared(game_folder + "/gui/cursor.png");
+
     atlas->set_tile_size(64, 64);
     glGenBuffers(1, &vbo);
 
     shader->bind_location_to_attribute(SHADER_LOCATION_POSITION, SHADER_VARIABLE_POSITION);
     shader->bind_location_to_attribute(SHADER_LOCATION_TEXTURE, SHADER_VARIABLE_TEXTURE);
     shader->link();
-    
+
     std::tie(tex_x1, tex_x2, tex_y1, tex_y2) = atlas->index_to_coords(atlas->get_name_index("cursor/arrow"));
 }
 
@@ -105,7 +98,7 @@ void MouseCursor::display() {
     glVertexAttribPointer(SHADER_LOCATION_TEXTURE, 2, GL_FLOAT, GL_FALSE, 4 * (GLsizei)sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
     glEnableVertexAttribArray(SHADER_LOCATION_POSITION);
     glEnableVertexAttribArray(SHADER_LOCATION_TEXTURE);
-    
+
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
 

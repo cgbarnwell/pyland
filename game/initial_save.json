@@ -1,0 +1,21 @@
+{
+	"current_map": "/world1/intro",
+	"previous_exit": "/world1/intro",
+	"totems": {},
+	"coins": 0, 
+	"py_scripter_tabs": 1,
+	"has_unlocked_pyscripter": false,
+	"player_type": "male_0",
+	"level_data" : {
+		"world_1" : {
+			"level_1" : {
+				"starting_map" : "player_house",
+				"heidi_state": 0
+			},
+			"level_2" : {
+				"starting_map" : "start"
+			}
+		}
+	}
+}
+
